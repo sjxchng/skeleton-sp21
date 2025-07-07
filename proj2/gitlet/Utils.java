@@ -168,6 +168,15 @@ class Utils {
             }
         };
 
+    /** Filter out all subdirectories. */
+    private static final FilenameFilter SUB_DIRS =
+        new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return new File(dir, name).isDirectory();
+            }
+        };
+
     /** Returns a list of the names of all plain files in the directory DIR, in
      *  lexicographic order as Java Strings.  Returns null if DIR does
      *  not denote a directory. */
@@ -188,20 +197,47 @@ class Utils {
         return plainFilenamesIn(new File(dir));
     }
 
+    /** Returns a list of the names of all subdirectories in the directory DIR, in
+     *  lexicographic order as Java Strings.  Returns null if DIR does
+     *  not denote a directory. */
+    static List<String> subDirNamesIn(File dir) {
+        String[] dirs = dir.list(SUB_DIRS);
+        if (dirs == null) {
+            return null;
+        } else {
+            Arrays.sort(dirs);
+            return Arrays.asList(dirs);
+        }
+    }
+
     /* OTHER FILE UTILITIES */
 
-    /** Return the concatentation of FIRST and OTHERS into a File designator,
+    /** Return the concatenation of FIRST and OTHERS into a File designator,
      *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
      *  method. */
     static File join(String first, String... others) {
         return Paths.get(first, others).toFile();
     }
 
-    /** Return the concatentation of FIRST and OTHERS into a File designator,
+    /** Return the concatenation of FIRST and OTHERS into a File designator,
      *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
      *  method. */
     static File join(File first, String... others) {
         return Paths.get(first.getPath(), others).toFile();
+    }
+
+    /** Return the concatenation of FIRST and OTHERS into a File designator,
+     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
+     *  method. */
+    static File join(String first, File others) {
+        return Paths.get(first, others.getPath()).toFile();
+    }
+
+    /** Return the concatenation of FIRST and OTHERS into a File designator,
+     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
+     *  method. */
+    static File join(File first, File others) {
+        return Paths.get(first.getPath(), others.getPath()).toFile();
     }
 
 
@@ -236,4 +272,14 @@ class Utils {
         System.out.printf(msg, args);
         System.out.println();
     }
+
+    /** Print a message and exit with code 0.
+     *
+     * @author Yuhan Zhang
+     */
+    static void exit(String msg) {
+        System.out.println(msg);
+        System.exit(0);
+    }
+
 }
