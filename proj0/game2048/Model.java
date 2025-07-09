@@ -1,12 +1,11 @@
 package game2048;
 
-import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author Yuhan Zhang
+ *  @author TODO: YOUR NAME HERE
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -96,6 +95,7 @@ public class Model extends Observable {
     }
 
     /** Tilt the board toward SIDE. Return true iff this changes the board.
+     *
      * 1. If two Tile objects are adjacent in the direction of motion and have
      *    the same value, they are merged into one Tile of twice the original
      *    value and that new value is added to the score instance variable
@@ -110,103 +110,15 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // Change Viewing perspective according to the given side
-        // so that only need to write code for one direction.
-        board.setViewingPerspective(side);
-
-        // Implementation of the up direction (Side.NORTH):
-
-        // Break the board into columns.
-        Tile[] tiles = findAllTiles(board);
-        Tile[][] tile = new Tile[board.size()][board.size()];
-        int count = 0;
-        for (int i = 0; i < board.size(); i++) {
-            for (int j = 0; j < board.size(); j++) {
-                tile[i][j] = tiles[count++];
-            }
-        }
-
-        // Iterate all columns and get the moves for each column.
-        for (int i = tile.length - 1; i >= 0; i--) {
-            int[] move = movesForCol(tile[i]);
-            // Iterate all tiles in the column.
-            for (int j = tile[i].length - 1; j >= 0; j--) {
-                // Only focus on valid (non-empty) tiles.
-                if (tile[i][j] != null) {
-                    // Conduct the move.
-                    board.move(i, j + move[j], tile[i][j]);
-                    // Set changed to true if move != 0.
-                    if (move[j] != 0) {
-                        changed = true;
-                    }
-                }
-            }
-        }
-
-        // Restore viewing perspective.
-        board.setViewingPerspective(Side.NORTH);
+        // TODO: Modify this.board (and perhaps this.score) to account
+        // for the tilt to the Side SIDE. If the board changed, set the
+        // changed local variable to true.
 
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
-    }
-
-    /** Given a column of tiles, return an array of ints
-     *  containing the relative move step for each tile.
-     *  */
-    public int[] movesForCol(Tile[] col) {
-        // Get the values of each tile in the given column.
-        int[] val = new int[col.length];
-        int count = 0;
-        for (Tile t : col) {
-            if (t != null) {
-                val[count++] = t.value();
-            } else {
-                val[count++] = 0;
-            }
-        }
-
-        // Calculate the moves for each tile:
-        int[] move = new int[col.length];
-
-        // Organize the tiles, remove 0s in the middle,
-        // i.e. push all valid tile to the top without merge.
-        for (int i = 0; i < val.length; i++) {
-            int numOfZero = 0;
-            for (int j = i + 1; j < val.length; j++) {
-                if (val[j] == 0) {
-                    numOfZero++;
-                }
-            }
-            move[i] = numOfZero;
-        }
-
-        // Look for merges.
-        for (int i = val.length - 1; i >= 0; i--) {
-            // Skip empty spaces
-            if (val[i] == 0) {
-                continue;
-            }
-            // Check if the next valid tile has the same value.
-            for (int j = i - 1; j >= 0; j--) {
-                if (val[i] == val[j]) {
-                    // Clear the value for later iterations.
-                    val[j] = 0;
-                    // Inc all moves from 0 to j for merge.
-                    for (int k = 0; k <= j; k++) {
-                        move[k]++;
-                    }
-                    // Add corresponding score.
-                    score += val[i] * 2;
-                    break;
-                }
-            }
-        }
-
-        // Return the list of moves for each tile in the column.
-        return move;
     }
 
     /** Checks if the game is over and sets the gameOver variable
@@ -221,41 +133,11 @@ public class Model extends Observable {
         return maxTileExists(b) || !atLeastOneMoveExists(b);
     }
 
-    /** Check if the given tile is valid and has the same value. */
-    public static boolean sameValue(Tile t, int val) {
-        return t != null && t.value() == val;
-    }
-
-    /** A helper method to get all tiles from the board,
-     *  and return them as a list of tiles.
-     */
-    public static Tile[] findAllTiles(Board b) {
-        ArrayList<Tile> tList = new ArrayList<>();
-        // Traverse the board and append all the tiles.
-        int boardSize = b.size();
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                tList.add(b.tile(i, j));
-            }
-        }
-        // Convert to array and return.
-        Tile[] ts = new Tile[tList.size()];
-        tList.toArray(ts);
-        return ts;
-    }
-
     /** Returns true if at least one space on the Board is empty.
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // Traverse all tiles on the board to check if any of them is empty.
-        Tile[] allTiles = findAllTiles(b);
-        for (Tile t : allTiles) {
-            if (t == null) {
-                return true;
-            }
-        }
-        // No empty space, return false.
+        // TODO: Fill in this function.
         return false;
     }
 
@@ -265,50 +147,7 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // Traverse all tiles on the board to check if MAX_PIECE exists.
-        Tile[] allTiles = findAllTiles(b);
-        for (Tile t : allTiles) {
-            if (sameValue(t, MAX_PIECE)) {
-                return true;
-            }
-        }
-        // MAX_PIECE not found, return false.
-        return false;
-    }
-
-    /** Returns true if the given tile has a neighbor with the same value,
-     *  on the given board.
-     */
-    public static boolean sameValueAdjacentExists(Board b, Tile t) {
-        // Down
-        if (t.row() - 1 >= 0) {
-            Tile ts = b.tile(t.col(), t.row() - 1);
-            if (sameValue(t, ts.value())) {
-                return true;
-            }
-        }
-        // Up
-        if (t.row() + 1 < b.size()) {
-            Tile ts = b.tile(t.col(), t.row() + 1);
-            if (sameValue(t, ts.value())) {
-                return true;
-            }
-        }
-        // Right
-        if (t.col() - 1 >= 0) {
-            Tile ts = b.tile(t.col() - 1, t.row());
-            if (sameValue(t, ts.value())) {
-                return true;
-            }
-        }
-        // Left
-        if (t.col() + 1 < b.size()) {
-            Tile ts = b.tile(t.col() + 1, t.row());
-            if (sameValue(t, ts.value())) {
-                return true;
-            }
-        }
-        // None of the neighbors matched.
+        // TODO: Fill in this function.
         return false;
     }
 
@@ -319,20 +158,7 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // 1. At least one empty space on the board.
-        if (emptySpaceExists(b)) {
-            return true;
-        }
-
-        // 2. Two adjacent tiles with the same value.
-        Tile[] allTiles = findAllTiles(b);
-        for (Tile t : allTiles) {
-            if (sameValueAdjacentExists(b, t)) {
-                return true;
-            }
-        }
-
-        // No valid move exists.
+        // TODO: Fill in this function.
         return false;
     }
 

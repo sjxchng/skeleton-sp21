@@ -38,14 +38,7 @@ check: default
 
 # 'make clean' will clean up stuff you can reconstruct.
 clean:
-	rm -rf .gitlet
 	$(RM) *~
 	$(RMAKE) -C $(PACKAGE) clean
 	$(RMAKE) -C testing clean
 
-restart:
-	rm -rf .gitlet
-	$(RM) *~
-	$(RMAKE) -C $(PACKAGE) clean
-	$(RMAKE) -C testing clean
-	$(RMAKE) -C $(PACKAGE) default

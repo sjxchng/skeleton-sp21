@@ -5,7 +5,7 @@ import java.io.File;
 import static capers.Utils.*;
 
 /** Canine Capers: A Gitlet Prelude.
- * @author Yuhan Zhang
+ * @author TODO
 */
 public class Main {
     /**
@@ -38,7 +38,7 @@ public class Main {
      */
     public static void main(String[] args) {
         if (args.length == 0) {
-            exitWithError("Must have at least one argument");
+            Utils.exitWithError("Must have at least one argument");
         }
 
         CapersRepository.setupPersistence();
@@ -52,15 +52,11 @@ public class Main {
             break;
         case "dog":
             validateNumArgs("dog", args, 4);
-            try {
-                CapersRepository.makeDog(args[1], args[2], Integer.parseInt(args[3]));
-            } catch (Exception e) {
-                exitWithError("Age of dog must be an integer");
-            }
+            // TODO: make a dog
             break;
         case "birthday":
             validateNumArgs("birthday", args, 2);
-            CapersRepository.celebrateBirthday(args[1]);
+            // TODO: celebrate this dog's birthday
             break;
         default:
             exitWithError(String.format("Unknown command: %s", args[0]));
